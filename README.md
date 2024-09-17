@@ -105,8 +105,7 @@ const TransactionSchema = new mongoose.Schema({
 - **Request Body**:
   ```json
   {
-    "firstName": "John",
-    "lastName": "Doe",
+    "name": "John Doe",
     "email": "john@example.com",
     "password": "securepassword"
   }
@@ -115,8 +114,7 @@ const TransactionSchema = new mongoose.Schema({
   ```json
   {
     "_id": "605c72...",
-    "firstName": "John",
-    "lastName": "Doe",
+    "name": "John Doe",
     "email": "john@example.com"
   }
   ```
@@ -127,8 +125,7 @@ const TransactionSchema = new mongoose.Schema({
   ```json
   {
     "_id": "605c72...",
-    "firstName": "John",
-    "lastName": "Doe",
+    "name": "John Doe",
     "email": "john@example.com",
     "accounts": []
   }
@@ -141,14 +138,13 @@ const TransactionSchema = new mongoose.Schema({
 - **Request Body**:
   ```json
   {
-    "customerId": "605c72...",
-    "initialBalance": 1000
+    "customerId": "605c72..."
   }
   ```
 - **Response**:
   ```json
   {
-    "accountNumber": "ACC123456",
+    "accountNumber": "100123456",
     "balance": 1000,
     "customerId": "605c72..."
   }
@@ -164,8 +160,8 @@ const TransactionSchema = new mongoose.Schema({
 - **Request Body**:
   ```json
   {
-    "fromAccount": "ACC123456",
-    "toAccount": "ACC654321",
+    "fromAccount": "1002312345",
+    "toAccount": "1003654321",
     "amount": 200
   }
   ```
@@ -173,8 +169,8 @@ const TransactionSchema = new mongoose.Schema({
   ```json
   {
     "_id": "606d7c...",
-    "fromAccount": "ACC123456",
-    "toAccount": "ACC654321",
+    "fromAccount": "1002312345",
+    "toAccount": "1003654321",
     "amount": 200,
     "status": "completed"
   }
