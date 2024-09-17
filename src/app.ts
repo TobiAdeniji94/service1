@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response} from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
@@ -35,6 +35,10 @@ app.use('/api', transactionRoutes);
 app.use((err: any, req: any, res: any, next: any) => {
   console.error(err.stack);
   res.status(500).send('Something broke!');
+});
+
+app.get("/", (req: Request, res:Response) => {
+  res.status(200).json({ message: "Hello World" });
 });
 
 export default app;
