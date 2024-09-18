@@ -6,41 +6,51 @@ export const createTransaction = async (req: Request, res: Response) => {
   const { fromAccount, toAccount, amount } = req.body;
 
   try {
-    // find sender and receiver accounts
+    // Find sender and receiver accounts
     const senderAccount = await Account.findOne({ accountNumber: fromAccount });
     const receiverAccount = await Account.findOne({ accountNumber: toAccount });
 
-    // check if both accounts exist
+    // Check if both accounts exist
     if (!senderAccount || !receiverAccount) {
       return res.status(404).json({ message: 'Account not found' });
     }
 
-    // check if sender has enough balance
+    // Check if sender has enough balance
     if (senderAccount.balance < amount) {
       return res.status(400).json({ message: 'Insufficient funds' });
     }
 
-    // deduct amount from sender account
+    // Deduct amount from sender's account
     senderAccount.balance -= amount;
     await senderAccount.save();
 
     try {
-      // add amount to receiver account
+      // Add amount to receiver's account
       receiverAccount.balance += amount;
       await receiverAccount.save();
 
-      // create the transaction
-      const transaction = new Transaction({
+      // Create the transaction for both sender and receiver
+      const debitTransaction = new Transaction({
         fromAccount,
         toAccount,
         amount,
-        type: 'debit',
+        type: 'debit', // Debit for sender
         status: 'completed',
       });
 
-      await transaction.save();
+      const creditTransaction = new Transaction({
+        fromAccount,
+        toAccount,
+        amount,
+        type: 'credit', // Credit for receiver
+        status: 'completed',
+      });
 
-      return res.status(201).json(transaction);
+      // Save both transactions
+      await debitTransaction.save();
+      await creditTransaction.save();
+
+      return res.status(201).json({ debitTransaction, creditTransaction });
 
     } catch (creditError) {
       // If crediting receiver fails, revert the deduction from sender
