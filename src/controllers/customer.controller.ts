@@ -100,4 +100,50 @@ export const getCustomerDetails = async (req: MyRequest, res: Response) => {
       }
     }
   };
+
+// get all customers
+export const getAllCustomers = async (req: Request, res: Response) => {
+  try {
+    // Retrieve all customers from the database
+    const customers = await Customer.find().select('-password'); // Exclude passwords from the response
+
+    if (customers.length === 0) {
+      return res.status(404).json({ message: 'No customers found' });
+    }
+
+    res.status(200).json(customers);
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Server error', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+};
   
+// delete a customer and associated accounts using customerId from params
+export const deleteCustomer = async (req: Request, res: Response) => {
+  const { customerId } = req.params;
+
+  try {
+    // find the customer by ID
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    // delete all associated accounts
+    await Account.deleteMany({ customerId });
+
+    // delete the customer
+    await Customer.findByIdAndDelete(customerId);
+
+    res.status(200).json({ message: 'Customer and associated accounts deleted successfully' });
+  } catch (err) {
+    if (err instanceof Error) {
+      res.status(500).json({ message: 'Server error', error: err.message });
+    } else {
+      res.status(500).json({ message: 'Server error' });
+    }
+  }
+};
